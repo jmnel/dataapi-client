@@ -46,7 +46,7 @@ def export_topk(date: Union[str, datetime.date],
     if verbose:
         print('dataapi-client: session created')
     try:
-        auth_result = session.get(ENDPOINT_AUTH.format(API_KEY))
+        auth_result = session.get(ENDPOINT_AUTH.format(api_key))
         if verbose:
             print('dataapi-client: authenticated')
     except Exception as e:
@@ -61,7 +61,7 @@ def export_topk(date: Union[str, datetime.date],
     else:
         date = datetime.strftime('%Y-%m-%d')
 
-    json_data = {'api': API_KEY,
+    json_data = {'api': api_key,
                  'date': date,
                  'symbols': symbols}
 
