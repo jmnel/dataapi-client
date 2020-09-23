@@ -2,13 +2,11 @@ import requests
 import json
 from pprint import pprint
 import sqlite3
-from typing import Sequence, Union
+from typing import Sequence, Union, Optional
 import datetime
 from datetime import datetime
-#from concurrent import futures
-#from threading import Thread
-#from multiprocessing import Process
 
+from ..api import ApiConfig
 
 API_KEY = '88aed21fec2d4438996d3b62dcf3807c'
 ENDPOINT_BASE = 'http://hydra:8000/api/v1/'
@@ -16,18 +14,18 @@ ENDPOINT_AUTH = ENDPOINT_BASE + 'topk/authenticate?api={}'
 ENDPOINT_EXPORT = ENDPOINT_BASE + 'topk/import/'
 
 
-def export_topk(api_key: str,
-                date: Union[str, datetime.date],
+def export_topk(date: Union[str, datetime.date],
                 symbols: Sequence[str],
+                api_key: Optional[str] = None,
                 blocking: bool = True,
-                verbose: bool = True):
+                verbose: bool = False):
     """
     Export top-k prediction to the data server.
 
     Args:
-        api_key:        API key for authentication.
         date:           Date of prediction.
         symbols:        List of predicted symbols.
+        api_key:        API key for authentication.
         blocking:       Wait for IB symbol lookup before returning if true.
         verbose:        Generate verbose output.
 
@@ -35,6 +33,12 @@ def export_topk(api_key: str,
 
 
     """
+
+    if api_key is None or api_key == '':
+        if ApiConfig.api_key is None or ApiConfig.api_key == '':
+            raise ValueError('dataapi-client: API key not provided')
+        else:
+            api_key = ApiConfig.api_key
 
     if not blocking:
         raise NotImplementedError('dataapi-client: non-blocking requests not implemented yet.')
@@ -75,13 +79,3 @@ def export_topk(api_key: str,
         pprint(response_json)
 
     return response_json
-
-
-import csv
-
-with open('2020-09-21.csv') as f:
-    syms = tuple(s[0] for s in csv.reader(f))
-
-res = export_topk(API_KEY, '2020-09-21', syms, blocking=True)
-
-print('done')
