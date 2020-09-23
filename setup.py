@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='dataapi-client',
-    version='0.0.1',
+    version='0.0.2',
     author='Jacques Nel',
     author_email='jmnel92@gmail.com',
     description='Research data server API client',

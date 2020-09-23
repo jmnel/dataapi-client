@@ -8,8 +8,7 @@ from datetime import datetime
 
 from ..api import ApiConfig
 
-API_KEY = '88aed21fec2d4438996d3b62dcf3807c'
-ENDPOINT_BASE = 'http://hydra:8000/api/v1/'
+ENDPOINT_BASE = 'https://data.jmnel.com/api/v1/'
 ENDPOINT_AUTH = ENDPOINT_BASE + 'topk/authenticate?api={}'
 ENDPOINT_EXPORT = ENDPOINT_BASE + 'topk/import/'
 
