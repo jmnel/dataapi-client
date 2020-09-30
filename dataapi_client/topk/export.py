@@ -71,7 +71,7 @@ def export_topk(date: Union[str, datetime.date],
     json_data = {'api': api_key,
                  'date': date,
                  'symbols': symbols}
-#                 'overwrite': overwrite}
+                 'overwrite': overwrite}
 
     session.headers['referer'] = ENDPOINT_AUTH
     for key, val in session.headers.items():
