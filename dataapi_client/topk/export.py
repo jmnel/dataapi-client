@@ -16,6 +16,7 @@ ENDPOINT_EXPORT = ENDPOINT_BASE + 'topk/import/'
 def export_topk(date: Union[str, datetime.date],
                 symbols: Sequence[str],
                 api_key: Optional[str] = None,
+                overwrite: bool = False,
                 blocking: bool = True,
                 verbose: bool = False):
     """
@@ -25,6 +26,7 @@ def export_topk(date: Union[str, datetime.date],
         date:           Date of prediction.
         symbols:        List of predicted symbols.
         api_key:        API key for authentication.
+        overwrite:      Overwrite existing predictions.
         blocking:       Wait for IB symbol lookup before returning if true.
         verbose:        Generate verbose output.
 
@@ -45,12 +47,17 @@ def export_topk(date: Union[str, datetime.date],
     session = requests.Session()
     if verbose:
         print('dataapi-client: session created')
+
     try:
         auth_result = session.get(ENDPOINT_AUTH.format(api_key))
         if verbose:
             print('dataapi-client: authenticated')
+
     except Exception as e:
         raise ConnectionError('dataapi-client: failed to connect to server: {e}')
+
+    if not auth_result.ok:
+        raise ValueError(f'dataapi - client: authentification failed; {auth_result.reason}')
 
     if isinstance(date, str):
         try:
@@ -64,6 +71,11 @@ def export_topk(date: Union[str, datetime.date],
     json_data = {'api': api_key,
                  'date': date,
                  'symbols': symbols}
+#                 'overwrite': overwrite}
+
+    session.headers['referer'] = ENDPOINT_AUTH
+    for key, val in session.headers.items():
+        print(f'{key} -> {val}')
 
     data = {'csrfmiddlewaretoken': session.cookies['csrftoken'],
             'json_data': json.dumps(json_data)}
@@ -71,6 +83,8 @@ def export_topk(date: Union[str, datetime.date],
     if verbose:
         print('dataapi-client: exporting top-k symbols')
     response = session.post(ENDPOINT_EXPORT, data=data)
+
+    print(response.content)
     response_json = json.loads(response.content)
 
     if verbose:
