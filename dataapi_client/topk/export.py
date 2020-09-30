@@ -70,12 +70,10 @@ def export_topk(date: Union[str, datetime.date],
 
     json_data = {'api': api_key,
                  'date': date,
+                 'overwrite': overwrite,
                  'symbols': symbols}
-                 'overwrite': overwrite}
 
     session.headers['referer'] = ENDPOINT_AUTH
-    for key, val in session.headers.items():
-        print(f'{key} -> {val}')
 
     data = {'csrfmiddlewaretoken': session.cookies['csrftoken'],
             'json_data': json.dumps(json_data)}
@@ -84,7 +82,7 @@ def export_topk(date: Union[str, datetime.date],
         print('dataapi-client: exporting top-k symbols')
     response = session.post(ENDPOINT_EXPORT, data=data)
 
-    print(response.content)
+#    print(response.content)
     response_json = json.loads(response.content)
 
     if verbose:
